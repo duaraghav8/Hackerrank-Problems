@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
 
+class Path:
+	def __init__ (self, pacman):
+		self.path = [];
+		self.path.append (pacman);
+
+	def __lt__ (self, other):
+		return (self.getCostSoFar () < other.getCostSoFar ());
+
+	def addNewStep (self, step):
+		self.path.append (step);
+
+	def getPathSoFar (self):
+		return (self.path);
+
+	def getCostSoFar (self):
+		return (len (self.path) - 1);
+
 class Grid:
 	def __init__ (self, pacman, food, rows_cols):
 		self.pacman = pacman;
@@ -12,15 +29,13 @@ class Grid:
 			row = input ();
 			self.grid.append (row);
 
-		self.aStar ();
-
-	def getNextStates (self):
+	def getNextStates (self, currentState):
 		nextStates = [];
 
-		RIGHT = [self.pacman [0] + 1, self.pacman [1]];
-		LEFT = [self.pacman [0] - 1, self.pacman [1]];
-		UP = [self.pacman [0], self.pacman [1] + 1];
-		DOWN = [self.pacman [0], self.pacman [1] - 1];
+		RIGHT = [currentState [0] + 1, currentState [1]];
+		LEFT = [currentState [0] - 1, currentState [1]];
+		UP = [currentState [0], currentState [1] + 1];
+		DOWN = [currentState [0], currentState [1] - 1];
 
 		if (not self.grid [RIGHT [0]] [RIGHT [1]] == '%'):
 			nextStates.append (RIGHT);
@@ -34,9 +49,51 @@ class Grid:
 		return (nextStates);
 
 	def aStar (self):
-		pass;
-		
-def manhattan (goal, expanded_node):
+		paths = [];
+		pathToExpand = None;
+		index = None;
+		nextStates = None;
+		costs = None;
+		minForecastCost = None;
+		minFCIndex = None;
+
+		for i in range (0, 4):
+			path = Path (self.pacman);
+			paths.append (path);
+
+		counter = 0;
+		while (True):
+			pathToExpand = min (paths);	#TO BE DEFINED BY OPERATOR OVERLOADING IN PATH CLASS
+			print (pathToExpand.getCostSoFar (), pathToExpand.getPathSoFar ());
+#			return (0);
+			index = paths.index (pathToExpand);
+			print (index);
+			nextStates = self.getNextStates (pathToExpand.getPathSoFar () [-1]);
+			print (nextStates);
+#			return (0);
+			costs = [pathToExpand.getCostSoFar () for i in range (0, len (nextStates))];
+			costs = [];
+
+			for i in range (0, len (nextStates)):
+				costs.append (pathToExpand.getCostSoFar () + 1 + manhattan (nextStates [i], self.food));
+
+			print (costs);
+#			return (0);
+			minForecastCost = min (costs);
+			minFCIndex = costs.index (minForecastCost);
+			print (minFCIndex);
+			paths [index].addNewStep (nextStates [minFCIndex]);
+			print (paths [index].getPathSoFar (), paths [index].getCostSoFar ());
+
+			counter += 1;
+			if (counter == 2):
+				break;
+			if (nextStates [minFCIndex] == self.food):
+				return (paths [index]);
+
+						
+
+def manhattan (expanded_node, goal):
 	distance = abs (expanded_node [0] - goal [0]) + abs (expanded_node [1] - goal [1]);
 	return (distance);
 
@@ -47,6 +104,11 @@ def main ():
 
 	grid = Grid (pacman, food, rows_cols);
 	grid.buildGrid ();
+
+	path = grid.aStar ();
+#	print ('Total cost: ', len (path) - 1);
+#	for i in path:
+#		print (i);
  
 if (__name__) == '__main__':
 	main ();
