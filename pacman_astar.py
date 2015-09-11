@@ -1,21 +1,31 @@
 #!/usr/bin/env python3
+#When the next path is built, it takes the same step that was taken last time, resulting in the same thing.
+#Pacman may go back to where it came from. Prevent that
 
-class Path:
-	def __init__ (self, pacman):
-		self.path = [];
-		self.path.append (pacman);
+class PQueue:
+	def __init__ (self):
+		self.pQueue = [];
 
-	def __lt__ (self, other):
-		return (self.getCostSoFar () < other.getCostSoFar ());
+	def enqueue (self, stateInfo):
+		insertPos = -1;
+		for i in range (0, len (self.pQueue)):
+			if (stateInfo [1] < self.pQueue [i] [1]):
+				insertPos = i;
+				break;
 
-	def addNewStep (self, step):
-		self.path.append (step);
+		if (insertPos == -1):
+			self.pQueue.append (stateInfo);
+		else:
+			self.pQueue.insert (insertPos, stateInfo);
+		print ('queue status: ', self.pQueue);
 
-	def getPathSoFar (self):
-		return (self.path);
-
-	def getCostSoFar (self):
-		return (len (self.path) - 1);
+	def dequeue (self):
+		if (len (self.pQueue) == 0):
+			return (None);
+		bestState = self.pQueue [0];
+		self.pQueue = self.pQueue [1 : ];
+		print ('queue status: ', self.pQueue);
+		return (bestState [0]);
 
 class Grid:
 	def __init__ (self, pacman, food, rows_cols):
@@ -49,49 +59,22 @@ class Grid:
 		return (nextStates);
 
 	def aStar (self):
-		paths = [];
-		pathToExpand = None;
-		index = None;
-		nextStates = None;
-		costs = None;
-		minForecastCost = None;
-		minFCIndex = None;
+		stateHolder = PQueue ();
+		currentState = prevState = self.pacman;
 
-		for i in range (0, 4):
-			path = Path (self.pacman);
-			paths.append (path);
-
-		counter = 0;
 		while (True):
-			pathToExpand = min (paths);	#TO BE DEFINED BY OPERATOR OVERLOADING IN PATH CLASS
-			print (pathToExpand.getCostSoFar (), pathToExpand.getPathSoFar ());
-#			return (0);
-			index = paths.index (pathToExpand);
-			print (index);
-			nextStates = self.getNextStates (pathToExpand.getPathSoFar () [-1]);
-			print (nextStates);
-#			return (0);
-			costs = [pathToExpand.getCostSoFar () for i in range (0, len (nextStates))];
-			costs = [];
+			nextStates = [state for state in self.getNextStates (currentState) if not state == prevState];
+			print ('next states ', nextStates);
+			for state in nextStates:
+				heuristicCost = manhattan (self.pacman, state) + manhattan (state, self.food);
+				stateHolder.enqueue ( (state, heuristicCost) );
+#				print (heuristicCost);
 
-			for i in range (0, len (nextStates)):
-				costs.append (pathToExpand.getCostSoFar () + 1 + manhattan (nextStates [i], self.food));
-
-			print (costs);
-#			return (0);
-			minForecastCost = min (costs);
-			minFCIndex = costs.index (minForecastCost);
-			print (minFCIndex);
-			paths [index].addNewStep (nextStates [minFCIndex]);
-			print (paths [index].getPathSoFar (), paths [index].getCostSoFar ());
-
-			counter += 1;
-			if (counter == 2):
-				break;
-			if (nextStates [minFCIndex] == self.food):
-				return (paths [index]);
-
-						
+			prevState = currentState;
+			currentState = stateHolder.dequeue ();
+			print ('current state: ', currentState);
+			if (currentState == self.food):
+				break;						
 
 def manhattan (expanded_node, goal):
 	distance = abs (expanded_node [0] - goal [0]) + abs (expanded_node [1] - goal [1]);
