@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-#When the next path is built, it takes the same step that was taken last time, resulting in the same thing.
-#Pacman may go back to where it came from. Prevent that
+#Remove the prblem of pacman considering to go back to an already visited node
 
 class PQueue:
 	def __init__ (self):
@@ -42,10 +41,10 @@ class Grid:
 	def getNextStates (self, currentState):
 		nextStates = [];
 
-		RIGHT = [currentState [0] + 1, currentState [1]];
-		LEFT = [currentState [0] - 1, currentState [1]];
-		UP = [currentState [0], currentState [1] + 1];
-		DOWN = [currentState [0], currentState [1] - 1];
+		DOWN = [currentState [0] + 1, currentState [1]];
+		UP = [currentState [0] - 1, currentState [1]];
+		RIGHT = [currentState [0], currentState [1] + 1];
+		LEFT = [currentState [0], currentState [1] - 1];
 
 		if (not self.grid [RIGHT [0]] [RIGHT [1]] == '%'):
 			nextStates.append (RIGHT);
