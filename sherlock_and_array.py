@@ -1,3 +1,4 @@
+#Score: 11.11, Terminated due to Timeout
 def sideSum (array, pos, side):
 	total = 0;
 	if (side == 'l'):
