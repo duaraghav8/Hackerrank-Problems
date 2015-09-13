@@ -1,3 +1,4 @@
+//Score: 10.0
 #include <iostream>
 #include <string>
 #include <vector>
