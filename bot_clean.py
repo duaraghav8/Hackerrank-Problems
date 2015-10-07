@@ -3,7 +3,7 @@ from heapq import heapify, heappush, heappop;
 def manhattan (a, b):
 	return ( (abs (a [0] - b [0]) + abs (a [1] - b [1])) );
 
-def next_move(posr, posc, board):
+def next_move(posr, posc, grid):
 	dirt_cells = [];
 	for i in range (5):
 		dirt_cells.extend ([(manhattan ( (posr, posc), (i, col) ), (i, col) ) for col, char in enumerate(grid [i]) if char == 'd']);
