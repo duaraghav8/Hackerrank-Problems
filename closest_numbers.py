@@ -6,6 +6,7 @@ result = '';
 for i in range (size - 1):
 	gap = abs (array [i] - array [i + 1]);
 	if (gap < minGaps [0] [0]):
+		minGaps = [0];
 		minGaps [0] = (gap, (array [i], array [i + 1]));
 	elif (gap == minGaps [0] [0]):
 		minGaps.append ( (gap, (array [i], array [i + 1])) );
