@@ -1,3 +1,11 @@
+##############################################################################################################
+#	Use Breadth First Search to color the tree. The entire tree is 2-colorable (say RED & BLACK).
+#	If a node is RED, all its neighbours must be black and vice versa.
+#	Keep track of the number of RED (call it r) nodes & number of BLACK (call it b) nodes
+#	then answer is retrieved using simple nCr trick:
+#		( r(r - 1) / 2 ) + ( b(b - 1) / 2 )
+##############################################################################################################
+
 def has_key (dic, key):
 	found = False;
 	try:
